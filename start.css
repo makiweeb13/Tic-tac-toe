@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300&family=Michroma&display=swap');
+
+:root {
+    --background-clr: #002B5B;
+    --board-clr: #2B4865;
+    --light-green: #8FE3CF;
+}
+
+*,
+::after,
+::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Michroma', sans-serif;
+    background-color: var(--background-clr);
+    color: var(--light-green);
+}
+

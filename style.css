@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300&family=Michroma&display=swap');
+
+:root {
+    --background-clr: #002B5B;
+    --board-clr: #2B4865;
+    --light-green: #8FE3CF;
+    --background-light: 0 0 90px -40px var(--light-green);
+}
+
+*,
+::after,
+::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Michroma', sans-serif;
+    background-color: var(--background-clr);
+    color: var(--light-green);
+}
+
+.wrapper {
+    margin: 10px;
+}
+
+.board-container {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: auto auto auto;
+    gap: 1px;
+    position: relative;
+    top: 60px;
+    background-color: var(--light-green);
+    width: 450px;
+    margin: 0 auto;
+    box-shadow: var(--background-light);
+}
+
+.tile {
+    width: 150px;
+    height: 150px;
+    background-color: var(--board-clr);
+    cursor: pointer;
+    font-size: 6rem;
+    text-align: center;
+}
+
+.back {
+    font-size: 30px;
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--light-green);
+    cursor: pointer;
+}
