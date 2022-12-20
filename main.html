@@ -11,9 +11,11 @@
 <body>
     <main>
         <div class="wrapper">
-            <button class="back">
-            <i class="fa-solid fa-arrow-left"></i>
-            </button>
+            <h1 class="title">Tic tac toe</h1>
+            <p>Play as: </p>
+            <div class="options">
+                <span id="o-btn">O</span> or <span id="x-btn">X</span>
+            </div>
             <div class="board-container">
                 <div class="tile one" value="0"></div>
                 <div class="tile two" value="1"></div>
@@ -25,6 +27,8 @@
                 <div class="tile eight" value="7"></div>
                 <div class="tile nine" value="8"></div>
             </div>
+            <p class="comment"></p>
+            <p class="continue"></p>
         </div>
     </main>
     <script src="app.js"></script>
