@@ -81,17 +81,11 @@ span:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
 }
 
-.comment {
-    position: relative;
-    top: 20px;
-}
-
-.continue {
-    position: relative;
-    top: 25px;
+.status {
+    position: absolute;
+    bottom: 20px;
 }
 
 @keyframes fadeInOut {
@@ -106,7 +100,7 @@ span:hover {
     }
 }
 
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 1000px) {
     .wrapper {
         flex-direction: row;
         justify-content: space-around;
@@ -124,5 +118,9 @@ span:hover {
 
     .options {
         font-size: 2rem;
+    }
+
+    .status {
+        bottom: 50px;
     }
 }
