@@ -20,6 +20,7 @@ body {
     background-color: var(--background-clr);
     color: var(--light-green);
     text-align: center;
+    margin: 0 50px;
 }
 
 .title {
@@ -76,25 +77,21 @@ span:hover {
     text-align: center;
 }
 
-.back {
-    font-size: 30px;
-    background-color: transparent;
-    border-color: transparent;
-    color: var(--light-green);
-    cursor: pointer;
-    align-self: flex-start;
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .comment {
-    position: absolute;
-    bottom: 2.7rem;
-    align-self: center;
+    position: relative;
+    top: 20px;
 }
 
 .continue {
-    position: absolute;
-    bottom: 1.2rem;
-    align-self: center;
+    position: relative;
+    top: 25px;
 }
 
 @keyframes fadeInOut {
@@ -107,4 +104,25 @@ span:hover {
     100% {
       opacity: 0;
     }
-  }
+}
+
+@media screen and (min-width: 900px) {
+    .wrapper {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        margin-top: 90px;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+
+    .title {
+        font-size: 3rem;
+    }
+
+    .options {
+        font-size: 2rem;
+    }
+}
