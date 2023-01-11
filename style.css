@@ -21,17 +21,18 @@ body {
     color: var(--light-green);
     text-align: center;
     margin: 0 50px;
+    user-select: none;
 }
 
 .title {
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     font-size: 2.1rem;
 }
 
 .options {
-    font-size: 25px;
-    margin: 10px;
+    font-size: 20px;
+    margin: 20px;
 }
 
 span {
@@ -86,6 +87,15 @@ span:hover {
 .status {
     position: absolute;
     bottom: 20px;
+}
+
+.mode {
+    font-size: 20px;
+    margin: 20px;
+}
+
+#single {
+    text-decoration: underline;
 }
 
 @keyframes fadeInOut {

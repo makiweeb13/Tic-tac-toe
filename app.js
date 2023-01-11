@@ -1,34 +1,27 @@
 const tiles = document.querySelectorAll('.tile');
 const comment = document.querySelector('.comment');
 const continueMessage = document.querySelector('.continue');
-const X = document.getElementById('x-btn');
-const O = document.getElementById('o-btn');
+const XBtn = document.getElementById('x-btn');
+const OBtn = document.getElementById('o-btn');
+const singleMode = document.getElementById('single');
+const multiplayerMode = document.getElementById('multiplayer');
+const pickCharacter = document.querySelector('.pick-character');
 const firstMoves = [1, 3, 5, 7, 9];
 
-const numValue = {
-    1: 'one',
-    2: 'two',
-    3: 'three',
-    4: 'four',
-    5: 'five',
-    6: 'six',
-    7: 'seven',
-    8: 'eight',
-    9: 'nine'
-}
+const numValue = { 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 
+                   6: 'six', 7: 'seven', 8: 'eight', 9: 'nine' }
 
 let player = 'X';
 let opponent = 'O';
+let currentMode = 'single';
+let countTurn = 1;
 
-let tileNum,
-    playerTiles,
-    opponentTiles,
-    opponentCount,
-    corners,
-    winningTiles,
-    haveWon;
+let tileNum, playerTiles, opponentTiles, opponentCount, corners, winningTiles, haveWon, interval;
+const remove = currentTile => tileNum = tileNum.filter(tile => tile !== currentTile);
+const removeCorner = corner => corners = corners.filter(num => num !== corner);
 
-const initialize = () => {
+
+function initialize() {
     playerTiles = [];
     opponentTiles = [];
     opponentCount = [];
@@ -38,28 +31,115 @@ const initialize = () => {
     haveWon = false;
 }
 
-initialize();
+function startGame() {
+    initialize();
+    if (currentMode === 'single') generateRandomFirstMove();
+    tiles.forEach(tile => tile.addEventListener('click', function(event) {
+        const currentTile = event.currentTarget.classList;
+        handleGame(currentTile);
+    }))
+}
 
-const remove = currentTile => tileNum = tileNum.filter(tile => tile !== currentTile);
-const removeCorner = corner => corners = corners.filter(num => num !== corner);
+function startOver() {
+    interval = currentMode === 'single' ? 1000 : 2000;
+    setTimeout(() => {
+        initialize();
+        clear();
+        if (currentMode === 'single') generateRandomFirstMove()
+        else countTurn = 1;
+    }, interval);
+}
 
-const getTileNum = currentTile => {
+startGame();
+
+function handleGame(tiles) {
+    if (tileNum.length > 0) {
+        for (let i = 0; i < tileNum.length; i++) {
+            if (tiles.contains(tileNum[i])) {
+                if (currentMode === 'single') {
+                    handleSingleGame(tileNum[i]);
+                } 
+                else if (currentMode === 'multiplayer') {
+                    handleMultiplayerGame(tileNum[i]);
+                }
+            }
+        }
+    } 
+}
+
+function handleSingleGame(tile) {
+    let lastMove;
+    document.querySelector('.' + tile).textContent = player;
+    lastMove = getTileNum(tile);
+    playerTiles.push(lastMove);
+    removeCorner(lastMove);
+    remove(tile);
+    opponentResponse();
+}
+
+function handleMultiplayerGame(tile) {
+    if (countTurn%2 !== 0) {
+        document.querySelector('.' + tile).textContent = player;
+        lastMove = getTileNum(tile);
+        playerTiles.push(lastMove);
+        remove(tile);
+    } else {
+        document.querySelector('.' + tile).textContent = opponent;
+        lastMove = getTileNum(tile);
+        opponentTiles.push(lastMove);
+        remove(tile);
+    }
+
+    let recordP1 = getRecord(playerTiles, opponentTiles);
+    let countedTilesP1 = countTile(playerTiles, recordP1);
+    let recordP2 = getRecord(opponentTiles, playerTiles);
+    let countedTilesP2 = countTile(opponentTiles, recordP2);
+
+    if (countedTilesP1.includes(3)) {
+        let tilesToWinP1 = recordP1[countedTilesP1.indexOf(3)];
+        comment.textContent = "Player 1 Wins!";
+        for (let i = 0; i < tilesToWinP1.length; i++) {
+            let tilesWonP1 = document.querySelector('.' + numValue[tilesToWinP1[i]]);
+            tilesWonP1.style.animation = "fadeInOut 700ms ease-out";
+            setTimeout(() => {
+                tilesWonP1.style.animation = "none";
+            }, 1000);
+        }
+        haveWon = true;
+        tileNum = [];
+        startOver();
+    } else if (countedTilesP2.includes(3)) {
+        let tilesToWinP2 = recordP2[countedTilesP2.indexOf(3)];
+        comment.textContent = "Player 2 Wins!";
+        for (let i = 0; i < tilesToWinP2.length; i++) {
+            let tilesWonP2 = document.querySelector('.' + numValue[tilesToWinP2[i]]);
+            tilesWonP2.style.animation = "fadeInOut 700ms ease-out";
+            setTimeout(() => {
+                tilesWonP2.style.animation = "none";
+            }, 1000);
+        }
+        haveWon = true;
+        tileNum = [];
+        startOver();
+    }
+    countTurn++;
+}
+
+function getTileNum(currentTile) {
     for (let i = 1; i <= 9; i++) {
         if (numValue[i] === currentTile) return i;
     }
 }
 
-const generateRandomFirstMove = () => {
-    const randomNum = firstMoves[Math.floor(Math.random()*firstMoves.length)];
+function generateRandomFirstMove() {
+    const randomNum = firstMoves[Math.floor(Math.random() * firstMoves.length)];
     document.querySelector('.' + numValue[randomNum]).textContent = opponent;
     opponentTiles.push(getTileNum(numValue[randomNum]));
     removeCorner(getTileNum(numValue[randomNum]));
     remove(numValue[randomNum]);
 }
 
-setTimeout(() => generateRandomFirstMove(), 300);
-
-const getRecord = (player, opponent) => {
+function getRecord(player, opponent) {
     let record = [];
     winningTiles.map(tiles => {
         for (let i = 0; i < 3; i++) {
@@ -67,16 +147,16 @@ const getRecord = (player, opponent) => {
                 record.push(tiles);
             }
         }
-    })
+    });
 
     for (let i = 0; i < opponent.length; i++) {
-        record = record.filter(tile => !tile.includes(opponent[i]))
+        record = record.filter(tile => !tile.includes(opponent[i]));
     }
-    
-    return record
+
+    return record;
 }
 
-const countTile = (currentPlayer, record) => {
+function countTile(currentPlayer, record) {
     let playerCount = [];
     let count = 0;
     record.forEach(tiles => {
@@ -87,11 +167,11 @@ const countTile = (currentPlayer, record) => {
         }
         playerCount.push(count);
         count = 0;
-    })
-    return playerCount
+    });
+    return playerCount;
 }
 
-const clear = () => {
+function clear() {
     for (let i = 0; i < tileNum.length; i++) {
         document.querySelector('.' + tileNum[i]).textContent = '';
     }
@@ -99,16 +179,16 @@ const clear = () => {
     continueMessage.textContent = '';
 }
 
-const stratPlay = () => {
+function stratPlay() {
     let playerRecord = getRecord(playerTiles, opponentTiles);
     let playerCountedTiles = countTile(playerTiles, playerRecord);
     let opponentRecord = getRecord(opponentTiles, playerTiles);
     let opponentCountedTiles = countTile(opponentTiles, opponentRecord);
-    
+
     if (opponentCountedTiles.includes(2)) {
         let tileToWin = opponentRecord[opponentCountedTiles.indexOf(2)];
         let tile = tileToWin.filter(tile => !opponentTiles.includes(tile))[0];
-        
+
         setTimeout(() => {
             document.querySelector('.' + numValue[tile]).textContent = opponent;
             comment.textContent = "Opponent wins!";
@@ -118,13 +198,11 @@ const stratPlay = () => {
                 wonTiles.style.animation = "fadeInOut 700ms ease-out";
                 setTimeout(() => {
                     wonTiles.style.animation = "none";
-                }, 1000)
+                }, 1000);
             }
-
-        }, 500)
+        }, 500);
         haveWon = true;
         tileNum = [];
-        
     }
     else if (playerCountedTiles.includes(2)) {
         let tileToDefend = playerRecord[playerCountedTiles.indexOf(2)];
@@ -133,52 +211,51 @@ const stratPlay = () => {
 
         setTimeout(() => {
             document.querySelector('.' + numValue[tile]).textContent = opponent;
-        }, 500)
+        }, 500);
 
-        remove(numValue[tile]);  
-    } 
+        remove(numValue[tile]);
+    }
     else if (opponentRecord.length == 2) {
         opponentTiles.push(corners[0]);
 
         setTimeout(() => {
             document.querySelector('.' + numValue[corners[0]]).textContent = opponent;
-        }, 500)
+        }, 500);
 
         remove(numValue[corners[0]]);
-    } 
+    }
     else if (tileNum.length > 0) {
-        const randomTile = tileNum[Math.floor(Math.random()*tileNum.length)];
+        const randomTile = tileNum[Math.floor(Math.random() * tileNum.length)];
         opponentTiles.push(getTileNum(randomTile));
 
         setTimeout(() => {
             document.querySelector('.' + randomTile).textContent = opponent;
-        }, 500)
+        }, 500);
 
         remove(randomTile);
     }
 
     if (tileNum.length == 0) {
         setTimeout(() => {
-            continueMessage.textContent = "Click anywhere on the board to continue";
-            continueMessage.style.animation = "fadeInOut 2s ease-out infinite";
-        }, 1000)
+            startOver();
+        }, 1500);
 
-        if(!haveWon) {
+        if (!haveWon) {
             setTimeout(() => {
                 comment.textContent = "It'a draw!";
-            }, 500)
-        } 
+            }, 500);
+        }
     }
 }
 
-const opponentResponse = () => {
+function opponentResponse() {
     if (opponentTiles.length < 2 && corners.length > 0) {
-        const randomCorner = corners[Math.floor(Math.random()*corners.length)];
+        const randomCorner = corners[Math.floor(Math.random() * corners.length)];
         opponentTiles.push(getTileNum(numValue[randomCorner]));
 
         setTimeout(() => {
             document.querySelector('.' + numValue[randomCorner]).textContent = opponent;
-        }, 500)
+        }, 500);
 
         removeCorner(randomCorner);
         remove(numValue[randomCorner]);
@@ -187,48 +264,43 @@ const opponentResponse = () => {
     }
 }
 
-X.addEventListener('click', () => {
+XBtn.addEventListener('click', function() {
     initialize();
     player = 'X';
     opponent = 'O';
-    X.style.textDecoration = 'underline';
-    O.style.textDecoration = 'none';
+    XBtn.style.textDecoration = 'underline';
+    OBtn.style.textDecoration = 'none';
     clear();
-    generateRandomFirstMove();
+    startGame();
 })
 
-O.addEventListener('click', () => {
+OBtn.addEventListener('click', function() {
     initialize();
     player = 'O';
     opponent = 'X';
-    X.style.textDecoration = 'none';
-    O.style.textDecoration = 'underline';
+    XBtn.style.textDecoration = 'none';
+    OBtn.style.textDecoration = 'underline';
     clear();
-    generateRandomFirstMove();
+    startGame();
 })
 
-tiles.forEach(tile => {
-    tile.addEventListener('click', e => {
-        const currentTile = e.currentTarget.classList;
-        let lastMove;
-        
-        if (tileNum.length > 0) {
-            for (let i = 0; i < tileNum.length; i++) {
-                if (currentTile.contains(tileNum[i])) {
-                    document.querySelector('.' + tileNum[i]).textContent = player;
-                    lastMove = getTileNum(tileNum[i]);
-                    playerTiles.push(lastMove);
-                    removeCorner(lastMove);
-                    remove(tileNum[i]);
-                    opponentResponse();
-                }
-            }
-        } else {
-            initialize();
-            setTimeout(() => {
-                clear();
-                generateRandomFirstMove();
-            }, 1000)
-        }
-    })
+multiplayerMode.addEventListener('click', function() {
+    multiplayerMode.style.textDecoration = 'underline';
+    singleMode.style.textDecoration = 'none';
+    pickCharacter.innerHTML = 'First player as:';
+    currentMode = 'multiplayer';
+    initialize();
+    clear();
+    startGame();
+})
+
+singleMode.addEventListener('click', function() {
+    singleMode.style.textDecoration = 'underline';
+    multiplayerMode.style.textDecoration = 'none';
+    pickCharacter.innerHTML = 'Play as:';
+    currentMode = 'single';
+    interval = 2000;
+    initialize();
+    clear();
+    startGame();
 })
