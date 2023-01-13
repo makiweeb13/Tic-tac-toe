@@ -86,7 +86,7 @@ span:hover {
 
 .status {
     position: absolute;
-    bottom: 20px;
+    bottom: 70px;
 }
 
 .mode {
@@ -129,8 +129,50 @@ span:hover {
     .options {
         font-size: 2rem;
     }
+}
 
+@media screen and (max-width: 1000px) {
+    .wrapper {
+        transform: scale(0.9);
+    }
+    .title {
+        font-size: 40px;
+    }
+    .heading-wrapper {
+       display: flex;
+       font-size: 15px;
+       justify-content: center;
+       align-items: center;
+       flex-direction: column;
+    }
+    .mode-wrapper, .option-wrapper {
+        display: flex;
+        margin-bottom: 1rem;
+    }
+    .mode, .options, p {
+        margin: 0;
+        padding: 0;
+    }
     .status {
-        bottom: 50px;
+        bottom: -70px;
+    }
+    span {
+        font-size: 15px;
+        position: relative;
+        bottom: 7px;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .board-container {
+        transform: scale(0.70);
+        margin: 0;
+        top: 5px;
+    }
+    .title {
+        font-size: 39px;
+    }
+    .status {
+        bottom: 0px;
     }
 }

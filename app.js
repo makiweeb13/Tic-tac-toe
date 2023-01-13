@@ -97,7 +97,7 @@ function handleMultiplayerGame(tile) {
 
     if (countedTilesP1.includes(3)) {
         let tilesToWinP1 = recordP1[countedTilesP1.indexOf(3)];
-        comment.textContent = "Player 1 Wins!";
+        comment.textContent = `Player ${player} Won!`;
         for (let i = 0; i < tilesToWinP1.length; i++) {
             let tilesWonP1 = document.querySelector('.' + numValue[tilesToWinP1[i]]);
             tilesWonP1.style.animation = "fadeInOut 700ms ease-out";
@@ -110,7 +110,7 @@ function handleMultiplayerGame(tile) {
         startOver();
     } else if (countedTilesP2.includes(3)) {
         let tilesToWinP2 = recordP2[countedTilesP2.indexOf(3)];
-        comment.textContent = "Player 2 Wins!";
+        comment.textContent = `Player ${opponent} Won!`;
         for (let i = 0; i < tilesToWinP2.length; i++) {
             let tilesWonP2 = document.querySelector('.' + numValue[tilesToWinP2[i]]);
             tilesWonP2.style.animation = "fadeInOut 700ms ease-out";
@@ -120,6 +120,9 @@ function handleMultiplayerGame(tile) {
         }
         haveWon = true;
         tileNum = [];
+        startOver();
+    } else if (countTurn === 9) {
+        comment.textContent = "It's a draw!";
         startOver();
     }
     countTurn++;
