@@ -1,3 +1,5 @@
+// Initializations
+
 const tiles = document.querySelectorAll('.tile');
 const comment = document.querySelector('.comment');
 const continueMessage = document.querySelector('.continue');
@@ -20,6 +22,11 @@ let tileNum, playerTiles, opponentTiles, opponentCount, corners, winningTiles, h
 const remove = currentTile => tileNum = tileNum.filter(tile => tile !== currentTile);
 const removeCorner = corner => corners = corners.filter(num => num !== corner);
 
+// Starts the game once the page is loaded
+
+document.addEventListener('DOMContentLoaded', startGame());
+
+// The functions below initializes and starts the game
 
 function initialize() {
     playerTiles = [];
@@ -50,7 +57,7 @@ function startOver() {
     }, interval);
 }
 
-startGame();
+// This function handles the mode of the game
 
 function handleGame(tiles) {
     if (tileNum.length > 0) {
@@ -67,6 +74,8 @@ function handleGame(tiles) {
     } 
 }
 
+// For single player mode
+
 function handleSingleGame(tile) {
     let lastMove;
     document.querySelector('.' + tile).textContent = player;
@@ -76,6 +85,8 @@ function handleSingleGame(tile) {
     remove(tile);
     opponentResponse();
 }
+
+// For multiplayer mode
 
 function handleMultiplayerGame(tile) {
     if (countTurn%2 !== 0) {
@@ -128,11 +139,15 @@ function handleMultiplayerGame(tile) {
     countTurn++;
 }
 
+// Gets the numerical equivalent of the current tile
+
 function getTileNum(currentTile) {
     for (let i = 1; i <= 9; i++) {
         if (numValue[i] === currentTile) return i;
     }
 }
+
+// Generates a random a first move on one of the corners
 
 function generateRandomFirstMove() {
     const randomNum = firstMoves[Math.floor(Math.random() * firstMoves.length)];
@@ -141,6 +156,8 @@ function generateRandomFirstMove() {
     removeCorner(getTileNum(numValue[randomNum]));
     remove(numValue[randomNum]);
 }
+
+// Gets the record of the moves each player made
 
 function getRecord(player, opponent) {
     let record = [];
@@ -159,6 +176,8 @@ function getRecord(player, opponent) {
     return record;
 }
 
+// Counts the number of tiles the player has that matches the winning patterns
+
 function countTile(currentPlayer, record) {
     let playerCount = [];
     let count = 0;
@@ -174,6 +193,8 @@ function countTile(currentPlayer, record) {
     return playerCount;
 }
 
+// Clears the board
+
 function clear() {
     for (let i = 0; i < tileNum.length; i++) {
         document.querySelector('.' + tileNum[i]).textContent = '';
@@ -182,6 +203,9 @@ function clear() {
     continueMessage.textContent = '';
 }
 
+// The playing strategies of the opponent including attacking and defending
+// This serves as the bot for the single player game
+
 function stratPlay() {
     let playerRecord = getRecord(playerTiles, opponentTiles);
     let playerCountedTiles = countTile(playerTiles, playerRecord);
@@ -189,6 +213,8 @@ function stratPlay() {
     let opponentCountedTiles = countTile(opponentTiles, opponentRecord);
 
     if (opponentCountedTiles.includes(2)) {
+
+        // Looks for the opportunity and waits for the player to blunder and win
         let tileToWin = opponentRecord[opponentCountedTiles.indexOf(2)];
         let tile = tileToWin.filter(tile => !opponentTiles.includes(tile))[0];
 
@@ -208,6 +234,8 @@ function stratPlay() {
         tileNum = [];
     }
     else if (playerCountedTiles.includes(2)) {
+
+        //Prevents the player from winning
         let tileToDefend = playerRecord[playerCountedTiles.indexOf(2)];
         let tile = tileToDefend.filter(tile => !playerTiles.includes(tile))[0];
         opponentTiles.push(tile);
@@ -219,6 +247,8 @@ function stratPlay() {
         remove(numValue[tile]);
     }
     else if (opponentRecord.length == 2) {
+
+        // If the opponent neither has to defend or attack and there are still corners left
         opponentTiles.push(corners[0]);
 
         setTimeout(() => {
@@ -228,6 +258,8 @@ function stratPlay() {
         remove(numValue[corners[0]]);
     }
     else if (tileNum.length > 0) {
+
+        // If nothing has happened yet and there are still tiles left
         const randomTile = tileNum[Math.floor(Math.random() * tileNum.length)];
         opponentTiles.push(getTileNum(randomTile));
 
@@ -239,6 +271,7 @@ function stratPlay() {
     }
 
     if (tileNum.length == 0) {
+        // If it ended as a draw or the opponent has won, the game will start over
         setTimeout(() => {
             startOver();
         }, 1500);
@@ -250,6 +283,8 @@ function stratPlay() {
         }
     }
 }
+
+// The opponent's response after every move of the player
 
 function opponentResponse() {
     if (opponentTiles.length < 2 && corners.length > 0) {
